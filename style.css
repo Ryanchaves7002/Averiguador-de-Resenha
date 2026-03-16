@@ -1,0 +1,97 @@
+:root {
+    --primary-color: blue;
+    --secondary-color: white;
+    --terciary-color: gray;
+    --container-color: black;
+    --carregamento-color: #01723d;
+}
+
+body {
+    font-family: Arial;
+    background: #111;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+}
+
+textarea {
+    width: 96%;
+    height: 100px;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+input {
+    width: 96%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    background: #00c853;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.analisar {
+    background: #0444f7;
+}
+
+ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #444;
+    border-top: 5px solid #00ff88;
+    border-radius: 50%;
+    animation: girar 1s linear infinite;
+    margin-top: 20px;
+}
+
+@keyframes girar {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

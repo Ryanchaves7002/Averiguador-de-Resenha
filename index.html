@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Averiguador de Resenha</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Averiguador de Resenha 👀</h1>
+
+        <textarea id="texto" placeholder="Mensagem suspeita"></textarea>
+
+        <h3>Pessoas que podem ir</h3>
+        <input id="nomePode" placeholder="Nome">
+        <button onclick="adicionarPode()">Adicionar</button>
+        <ul id="listaPode"></ul>
+
+
+        <h3>Pessoas que não podem ir</h3>
+        <input id="nomeNaoPode" placeholder="Nome">
+        <input id="motivoNaoPode" placeholder="Motivo">
+        <button onclick="adicionarNaoPode()">Adicionar</button>
+        <ul id="listaNaoPode"></ul>
+
+        <button class="analisar" onclick="analisar()">Analisar Resenha</button>
+
+        <div id="resultado"></div>
+
+    </div>
+
+
+    <div id="loading" class="loading">
+        <h2>Averiguando resenhas...</h2>
+        <div class="spinner"></div>
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
