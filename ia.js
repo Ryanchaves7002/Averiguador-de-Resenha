@@ -1,39 +1,48 @@
-function analisarResenha(texto, pessoas, horario){
-
-let score = 0
-
-let palavras = [
-"resenha",
-"churrasco",
-"churras",
-"open bar",
-"paredão",
-"cerveja",
-"festa",
-"role"
+const palavrasDeResenha = [
+	"resenha", "festa", "churrasco", "churras", "open bar", "cerveja",
+	"paredao", "role", "balada", "jogar", "jogando", "jogo", "jogos",
+	"bebida", "bebidas", "amigos", "amigo", "amizade", "diversao",
+	"divertido", "divertida"
 ]
 
-texto = texto.toLowerCase()
+const motivosBloqueantes = [
+	"trabalho", "prova", "doente", "viagem", "familia", "estudo",
+	"compromisso", "outro compromisso", "outros compromissos"
+]
 
-palavras.forEach(p => {
-if(texto.includes(p)){
-score += 20
-}
-})
-
-if(pessoas > 10){
-score += 20
-}
-
-let hora = parseInt(horario.split(":")[0])
-
-if(hora >= 20){
-score += 20
+function normalizarTexto(texto) {
+	return String(texto || "")
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.trim()
+		.toLowerCase()
 }
 
-if(score > 100){
-score = 100
+function limitarPontuacao(pontuacao) {
+	return Math.max(0, Math.min(100, pontuacao))
 }
 
-return score
+function analisarResenha(texto, pessoasPodem = [], pessoasNaoPodem = []) {
+	const mensagem = normalizarTexto(texto)
+	const palavrasEncontradas = palavrasDeResenha.filter((palavra) =>
+		mensagem.includes(palavra)
+	)
+	const impedimentosEncontrados = pessoasNaoPodem.filter((pessoa) => {
+		const motivo = normalizarTexto(pessoa && pessoa.motivo)
+		return motivosBloqueantes.some((bloqueio) => motivo.includes(bloqueio))
+	})
+
+	const pontosDaMensagem = palavrasEncontradas.length * 15
+	const pontosDaLista = Math.min(pessoasPodem.length * 10, 30)
+	const descontoDosImpedimentos = impedimentosEncontrados.length * 10
+	const probabilidade = limitarPontuacao(
+		pontosDaMensagem + pontosDaLista - descontoDosImpedimentos
+	)
+
+	return {
+		probabilidade,
+		palavrasEncontradas,
+		impedimentosEncontrados,
+		temSinaisDeResenha: palavrasEncontradas.length > 0
+	}
 }

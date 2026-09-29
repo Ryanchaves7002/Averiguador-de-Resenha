@@ -3,43 +3,104 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Averiguador de Resenha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="./image%20copy.png">
 </head>
 
 <body>
 
-    <div class="container">
+    <main class="container">
+        <header class="page-header">
+            <div class="brand-mark">AR</div>
+            <div>
+                <p class="eyebrow">Central de análise</p>
+                <h1>Averiguador <span>de resenha</span></h1>
+            </div>
+            <div class="status-badge"><span></span> online</div>
+        </header>
 
-        <h1>Averiguador de Resenha 👀</h1>
+        <section class="intro">
+            <p>Descubra se aquela mensagem tem cara de rolê. Cole o texto abaixo e ajuste o contexto da turma.</p>
+        </section>
 
-        <textarea id="texto" placeholder="Mensagem suspeita"></textarea>
+        <section class="section-block message-section">
+            <div class="section-heading">
+                <div class="section-number">01</div>
+                <div>
+                    <h2>Mensagem suspeita</h2>
+                    <p>O que foi combinado no grupo?</p>
+                </div>
+            </div>
+            <label class="sr-only" for="texto">Mensagem suspeita</label>
+            <textarea id="texto" placeholder="Cole aqui a mensagem do grupo..." maxlength="1000"></textarea>
+            <div class="field-hint"><span>⌁</span> A análise considera palavras e contexto</div>
+        </section>
 
-        <h3>Pessoas que podem ir</h3>
-        <input id="nomePode" placeholder="Nome">
-        <button onclick="adicionarPode()">Adicionar</button>
-        <ul id="listaPode"></ul>
+        <div class="people-grid">
+            <section class="section-block people-section">
+                <div class="section-heading compact-heading">
+                    <div class="section-number positive">02</div>
+                    <div>
+                        <h2>Na lista</h2>
+                        <p>Quem pode comparecer?</p>
+                    </div>
+                </div>
+                <div class="input-action">
+                    <label class="sr-only" for="nomePode">Nome de quem pode ir</label>
+                    <input id="nomePode" placeholder="Nome da pessoa" autocomplete="off">
+                    <button class="add-button" type="button" onclick="adicionarPode()" aria-label="Adicionar pessoa que pode ir">+</button>
+                </div>
+                <ul id="listaPode" class="people-list"></ul>
+                <p class="empty-state" data-empty="pode">Nenhuma pessoa adicionada ainda</p>
+            </section>
 
+            <section class="section-block people-section">
+                <div class="section-heading compact-heading">
+                    <div class="section-number negative">03</div>
+                    <div>
+                        <h2>Impedidos</h2>
+                        <p>Quem não consegue ir?</p>
+                    </div>
+                </div>
+                <div class="input-stack">
+                    <label class="sr-only" for="nomeNaoPode">Nome de quem não pode ir</label>
+                    <input id="nomeNaoPode" placeholder="Nome da pessoa" autocomplete="off">
+                    <div class="input-action">
+                        <label class="sr-only" for="motivoNaoPode">Motivo da ausência</label>
+                        <input id="motivoNaoPode" placeholder="Motivo" autocomplete="off">
+                        <button class="add-button" type="button" onclick="adicionarNaoPode()" aria-label="Adicionar pessoa impedida">+</button>
+                    </div>
+                </div>
+                <ul id="listaNaoPode" class="people-list"></ul>
+                <p class="empty-state" data-empty="nao-pode">Nenhuma restrição adicionada</p>
+            </section>
+        </div>
 
-        <h3>Pessoas que não podem ir</h3>
-        <input id="nomeNaoPode" placeholder="Nome">
-        <input id="motivoNaoPode" placeholder="Motivo">
-        <button onclick="adicionarNaoPode()">Adicionar</button>
-        <ul id="listaNaoPode"></ul>
+        <button class="analisar" type="button" onclick="analisar()">
+            <span>Analisar resenha</span>
+            <span class="button-arrow">→</span>
+        </button>
 
-        <button class="analisar" onclick="analisar()">Analisar Resenha</button>
-
-        <div id="resultado"></div>
-
+        <div id="resultado" class="result" aria-live="polite"></div>
     </div>
 
 
     <div id="loading" class="loading">
-        <h2>Averiguando resenhas...</h2>
-        <div class="spinner"></div>
+        <div class="loading-media">
+            <img src="./image%20copy%202.png" alt="Averiguando possível resenha">
+            <strong>Averiguando possível<br>resenha</strong>
+        </div>
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Averiguando a resenha 👀<span>...</span></p>
     </div>
 
 
+    <script src="ia.js"></script>
     <script src="script.js"></script>
 
 </body>

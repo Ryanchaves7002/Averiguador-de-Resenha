@@ -1,181 +1,105 @@
-let pessoasNaoPodem = []
-let pessoasPodem = []
-
+const pessoasNaoPodem = []
+const pessoasPodem = []
 
 function falar(texto) {
+    const mensagem = String(texto || "").trim()
 
-    let msg = new SpeechSynthesisUtterance(texto)
+    if (!mensagem || !("speechSynthesis" in window)) return
 
+    const msg = new SpeechSynthesisUtterance(mensagem)
     msg.lang = "pt-BR"
     msg.rate = 1
-
+    msg.pitch = 1
+    speechSynthesis.cancel()
     speechSynthesis.speak(msg)
-
 }
 
+function obterValorCampo(id) {
+    const elemento = document.getElementById(id)
+    return elemento ? elemento.value.trim() : ""
+}
 
-// ADICIONAR PESSOAS QUE NÃO PODEM IR
+function limparCampo(id) {
+    const elemento = document.getElementById(id)
+    if (elemento) elemento.value = ""
+}
 
 function adicionarNaoPode() {
+    const nome = obterValorCampo("nomeNaoPode")
+    const motivo = obterValorCampo("motivoNaoPode")
 
-    let nome = document.getElementById("nomeNaoPode").value
-    let motivo = document.getElementById("motivoNaoPode").value
-
-    if (nome === "" || motivo === "") return
+    if (!nome || !motivo) return
 
     pessoasNaoPodem.push({ nome, motivo })
-
     atualizarListaNaoPode()
-
-    document.getElementById("nomeNaoPode").value = ""
-    document.getElementById("motivoNaoPode").value = ""
-
+    limparCampo("nomeNaoPode")
+    limparCampo("motivoNaoPode")
 }
-
-
-// ADICIONAR PESSOAS QUE PODEM IR
 
 function adicionarPode() {
+    const nome = obterValorCampo("nomePode")
 
-    let nome = document.getElementById("nomePode").value
-
-    if (nome === "") return
+    if (!nome) return
 
     pessoasPodem.push(nome)
-
     atualizarListaPode()
-
-    document.getElementById("nomePode").value = ""
-
+    limparCampo("nomePode")
 }
-
-
-// ATUALIZAR LISTA NÃO PODE
 
 function atualizarListaNaoPode() {
-
-    let lista = document.getElementById("listaNaoPode")
+    const lista = document.getElementById("listaNaoPode")
+    if (!lista) return
 
     lista.innerHTML = ""
 
-    pessoasNaoPodem.forEach(p => {
-
-        let li = document.createElement("li")
-
-        li.textContent = p.nome + " - " + p.motivo
-
-        lista.appendChild(li)
-
+    pessoasNaoPodem.forEach((pessoa) => {
+        const item = document.createElement("li")
+        item.textContent = `${pessoa.nome} - ${pessoa.motivo}`
+        lista.appendChild(item)
     })
-
 }
-
-
-// ATUALIZAR LISTA PODE
 
 function atualizarListaPode() {
-
-    let lista = document.getElementById("listaPode")
+    const lista = document.getElementById("listaPode")
+    if (!lista) return
 
     lista.innerHTML = ""
 
-    pessoasPodem.forEach(p => {
-
-        let li = document.createElement("li")
-
-        li.textContent = p
-
-        lista.appendChild(li)
-
+    pessoasPodem.forEach((pessoa) => {
+        const item = document.createElement("li")
+        item.textContent = pessoa
+        lista.appendChild(item)
     })
-
 }
-
-
-// CALCULAR PROBABILIDADE
-
-function calcularProbabilidade(texto) {
-
-    texto = texto.toLowerCase()
-
-    let score = 0
-
-    let palavras = [
-        "resenha",
-        "festa",
-        "churrasco",
-        "churras",
-        "open bar",
-        "cerveja",
-        "paredao",
-        "role",
-        "balada"
-    ]
-
-    palavras.forEach(p => {
-
-        if (texto.includes(p)) {
-            score += 15
-        }
-
-    })
-
-
-    // PESSOAS QUE PODEM IR (AUMENTA)
-
-    pessoasPodem.forEach(() => {
-        score += 10
-    })
-
-
-    // PESSOAS QUE NÃO PODEM IR (DIMINUI)
-
-    pessoasNaoPodem.forEach(p => {
-
-        let motivo = p.motivo.toLowerCase()
-
-        if (
-            motivo.includes("trabalho") ||
-            motivo.includes("prova") ||
-            motivo.includes("doente") ||
-            motivo.includes("viagem") ||
-            motivo.includes("familia")
-        ) {
-            score -= 10
-        }
-
-    })
-
-
-    if (score < 0) score = 0
-    if (score > 100) score = 100
-
-    return score
-
-}
-
-
-// ANALISAR RESENHA
 
 function analisar() {
+    const campoTexto = document.getElementById("texto")
+    const loading = document.getElementById("loading")
+    const resultado = document.getElementById("resultado")
 
-    let texto = document.getElementById("texto").value
+    if (!campoTexto || !loading || !resultado) return
 
-    document.getElementById("loading").style.display = "flex"
+    const texto = campoTexto.value
 
+    if (!texto.trim()) {
+        resultado.textContent = "Digite uma resenha para analisar."
+        return
+    }
+
+    loading.style.display = "flex"
     falar("Averiguando resenhas, aguarde")
 
     setTimeout(() => {
+        const analise = analisarResenha(texto, pessoasPodem, pessoasNaoPodem)
+        const probabilidade = analise.probabilidade
 
-        let probabilidade = calcularProbabilidade(texto)
+        loading.style.display = "none"
+        resultado.textContent = `Probabilidade de resenha detectada: ${probabilidade}%`
 
-        document.getElementById("loading").style.display = "none"
-
-        document.getElementById("resultado").innerHTML =
-            "Probabilidade de resenha detectada: " + probabilidade + "%"
-
-        falar("Análise concluída. Probabilidade de resenha detectada de " + probabilidade + " por cento")
-
+        falar(`Análise concluída. Probabilidade de resenha detectada de ${probabilidade} por cento`)
     }, 3000)
-
 }
+
+window.adicionarNaoPode = adicionarNaoPode
+window.adicionarPode = adicionarPode
+window.analisar = analisar
