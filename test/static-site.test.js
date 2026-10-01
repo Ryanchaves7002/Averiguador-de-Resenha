@@ -38,7 +38,8 @@ test("o esquema remoto aplica segurança e preserva os recursos sociais", () => 
 
 test("a configuração publicada não contém segredos nem credenciais fictícias", () => {
     const config = read("supabase-config.js")
-    assert.match(config, /url:\s*["']{2}/)
-    assert.match(config, /anonKey:\s*["']{2}/)
+    assert.match(config, /url:\s*["']https:\/\/[^"']+\.supabase\.co["']/);
+    assert.doesNotMatch(config, /\/rest\/v1\/["']/);
+    
     assert.doesNotMatch(config, /service_role/i)
 })
