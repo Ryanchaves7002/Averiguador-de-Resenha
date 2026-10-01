@@ -7,7 +7,10 @@
     <title>Averiguador de Resenha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="./image%20copy.png">
 </head>
@@ -21,73 +24,121 @@
                 <p class="eyebrow">Central de análise</p>
                 <h1>Averiguador <span>de resenha</span></h1>
             </div>
-            <div class="status-badge"><span></span> online</div>
+            <div id="header-account" class="header-account" hidden>
+                <span id="header-nickname"></span>
+                <button id="logout-button" class="text-button" type="button">Sair</button>
+            </div>
         </header>
 
-        <section class="intro">
-            <p>Descubra se aquela mensagem tem cara de rolê. Cole o texto abaixo e ajuste o contexto da turma.</p>
-        </section>
-
-        <section class="section-block message-section">
-            <div class="section-heading">
-                <div class="section-number">01</div>
-                <div>
-                    <h2>Mensagem suspeita</h2>
-                    <p>O que foi combinado no grupo?</p>
-                </div>
+        <section class="section-block countdown" aria-labelledby="countdown-title">
+            <div class="countdown-heading">
+                <p class="eyebrow">EM BREVE</p>
+                <h2 id="countdown-title">A GRANDE RESENHA PARTE 2</h2>
             </div>
-            <label class="sr-only" for="texto">Mensagem suspeita</label>
-            <textarea id="texto" placeholder="Cole aqui a mensagem do grupo..." maxlength="1000"></textarea>
-            <div class="field-hint"><span>⌁</span> A análise considera palavras e contexto</div>
+            <div class="countdown-timer" role="timer" aria-label="Contagem regressiva para 29 de setembro de 2027">
+                <div class="countdown-unit"><span id="countdown-days">000</span><small>dias</small></div>
+                <div class="countdown-unit"><span id="countdown-hours">00</span><small>horas</small></div>
+                <div class="countdown-unit"><span id="countdown-minutes">00</span><small>minutos</small></div>
+                <div class="countdown-unit"><span id="countdown-seconds">00</span><small>segundos</small></div>
+            </div>
         </section>
 
-        <div class="people-grid">
-            <section class="section-block people-section">
-                <div class="section-heading compact-heading">
-                    <div class="section-number positive">02</div>
-                    <div>
-                        <h2>Na lista</h2>
-                        <p>Quem pode comparecer?</p>
+        <section id="auth-view" class="auth-view" aria-labelledby="auth-title">
+            <div class="auth-copy">
+                <p class="eyebrow">Sua turma, no mesmo rolê</p>
+                <h2 id="auth-title">A resenha começa aqui.</h2>
+                <p>Entre para organizar encontros, chamar amigos e registrar cada presença.</p>
+            </div>
+            <div class="auth-card">
+                <div class="auth-tabs" role="tablist" aria-label="Acesso à conta">
+                    <button class="auth-tab active" id="login-tab" type="button" role="tab" aria-selected="true" aria-controls="login-form">Entrar</button>
+                    <button class="auth-tab" id="register-tab" type="button" role="tab" aria-selected="false" aria-controls="register-form">Criar conta</button>
+                </div>
+                <form id="login-form" class="form-stack">
+                    <label for="login-email">Email</label>
+                    <input id="login-email" name="email" type="email" autocomplete="username" placeholder="voce@exemplo.com" required>
+                    <label for="login-password">Senha</label>
+                    <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+                    <button class="analisar" type="submit">Entrar na resenha <span class="button-arrow">→</span></button>
+                </form>
+                <form id="register-form" class="form-stack" hidden>
+                    <label for="register-name">Nome</label>
+                    <input id="register-name" name="name" autocomplete="name" minlength="2" maxlength="80" required>
+                    <div class="form-pair">
+                        <div><label for="register-nickname">Apelido</label><input id="register-nickname" name="nickname" autocomplete="username" minlength="3" maxlength="24" placeholder="seu.apelido" required></div>
+                        <div><label for="register-age">Idade</label><input id="register-age" name="age" type="number" min="1" max="120" inputmode="numeric" required></div>
                     </div>
-                </div>
-                <div class="input-action">
-                    <label class="sr-only" for="nomePode">Nome de quem pode ir</label>
-                    <input id="nomePode" placeholder="Nome da pessoa" autocomplete="off">
-                    <button class="add-button" type="button" onclick="adicionarPode()" aria-label="Adicionar pessoa que pode ir">+</button>
-                </div>
-                <ul id="listaPode" class="people-list"></ul>
-                <p class="empty-state" data-empty="pode">Nenhuma pessoa adicionada ainda</p>
+                    <label for="register-email">Email</label>
+                    <input id="register-email" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required>
+                    <label for="register-password">Senha <span class="field-hint">mínimo 8 caracteres</span></label>
+                    <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+                    <button class="analisar" type="submit">Criar minha conta <span class="button-arrow">→</span></button>
+                </form>
+                <p id="auth-message" class="feedback" aria-live="polite"></p>
+            </div>
             </section>
 
-            <section class="section-block people-section">
-                <div class="section-heading compact-heading">
-                    <div class="section-number negative">03</div>
-                    <div>
-                        <h2>Impedidos</h2>
-                        <p>Quem não consegue ir?</p>
-                    </div>
-                </div>
-                <div class="input-stack">
-                    <label class="sr-only" for="nomeNaoPode">Nome de quem não pode ir</label>
-                    <input id="nomeNaoPode" placeholder="Nome da pessoa" autocomplete="off">
-                    <div class="input-action">
-                        <label class="sr-only" for="motivoNaoPode">Motivo da ausência</label>
-                        <input id="motivoNaoPode" placeholder="Motivo" autocomplete="off">
-                        <button class="add-button" type="button" onclick="adicionarNaoPode()" aria-label="Adicionar pessoa impedida">+</button>
-                    </div>
-                </div>
-                <ul id="listaNaoPode" class="people-list"></ul>
-                <p class="empty-state" data-empty="nao-pode">Nenhuma restrição adicionada</p>
+        <section id="app-view" class="app-view" hidden>
+            <div class="profile-strip">
+                <div class="profile-avatar" id="profile-avatar">AR</div>
+                <div class="profile-text"><p class="eyebrow">Seu momento</p><h2 id="profile-name"></h2><p id="profile-level"></p></div>
+                <div class="profile-total"><strong id="profile-total">0</strong><span>resenhas</span></div>
+            </div>
+
+            <nav class="app-tabs" aria-label="Navegação principal">
+                <button class="app-tab active" type="button" data-panel="resenhas-panel">Resenhas</button>
+                <button class="app-tab" type="button" data-panel="friends-panel">Amigos <span id="friend-request-count" class="tab-count" hidden>0</span></button>
+                <button class="app-tab" type="button" data-panel="notifications-panel">Notificações <span id="notification-count" class="tab-count" hidden>0</span></button>
+                <button class="app-tab" type="button" data-panel="ranking-panel">Ranking</button>
+                <button class="app-tab" type="button" data-panel="analyzer-panel">Analisar</button>
+            </nav>
+
+            <section id="resenhas-panel" class="app-panel">
+                <div class="section-heading"><div class="section-number">01</div><div><h2>Próximas resenhas</h2><p>Encontros marcados pela sua turma.</p></div></div>
+                <form id="resenha-form" class="event-form">
+                    <label for="event-title">Nome da resenha</label><input id="event-title" name="title" maxlength="100" placeholder="Churrasco de sábado" required>
+                    <div class="form-pair"><div><label for="event-date">Data e hora</label><input id="event-date" name="startsAt" type="datetime-local" required></div><div><label for="event-place">Local</label><input id="event-place" name="place" maxlength="160" placeholder="Onde vai ser?" required></div></div>
+                    <label for="event-description">Descrição <span class="field-hint">opcional</span></label><textarea id="event-description" name="description" maxlength="1000" placeholder="O que a turma precisa saber?"></textarea>
+                    <button class="analisar" type="submit">Marcar resenha <span class="button-arrow">+</span></button>
+                </form>
+                <p id="event-feedback" class="feedback" aria-live="polite"></p>
+                <div id="event-list" class="event-list"></div>
             </section>
-        </div>
 
-        <button class="analisar" type="button" onclick="analisar()">
-            <span>Analisar resenha</span>
-            <span class="button-arrow">→</span>
-        </button>
+            <section id="friends-panel" class="app-panel" hidden>
+                <div class="section-heading"><div class="section-number">02</div><div><h2>Sua rede</h2><p>Encontre a turma e convide para a próxima.</p></div></div>
+                <form id="search-form" class="search-row"><label class="sr-only" for="user-search">Buscar por nome ou apelido</label><input id="user-search" name="q" minlength="2" placeholder="Buscar por nome ou apelido"><button class="small-action" type="submit">Buscar</button></form>
+                <div id="search-results" class="people-results"></div>
+                <div class="friends-grid">
+                    <div><h3>Pedidos recebidos</h3><div id="incoming-requests" class="people-results"></div></div>
+                    <div><h3>Seus amigos</h3><div id="friend-list" class="people-results"></div></div>
+                </div>
+                <h3>Pedidos enviados</h3><div id="outgoing-requests" class="people-results"></div>
+            </section>
 
-        <div id="resultado" class="result" aria-live="polite"></div>
-    </div>
+            <section id="notifications-panel" class="app-panel" hidden>
+                <div class="section-heading"><div class="section-number">03</div><div><h2>Notificações</h2><p>As novidades da sua rede, em tempo real.</p></div></div>
+                <div id="notification-list" class="notification-list"></div>
+            </section>
+
+            <section id="ranking-panel" class="app-panel" hidden>
+                <div class="section-heading"><div class="section-number">04</div><div><h2>Ranking de resenhadores</h2><p>Presenças confirmadas contam pontos.</p></div></div>
+                <div class="ranking-controls" role="group" aria-label="Escopo do ranking"><button class="scope-button active" type="button" data-scope="all">Geral</button><button class="scope-button" type="button" data-scope="friends">Entre amigos</button></div>
+                <ol id="ranking-list" class="ranking-list"></ol>
+            </section>
+
+            <section id="analyzer-panel" class="app-panel" hidden>
+                <div class="section-heading"><div class="section-number">05</div><div><h2>Averiguador de resenha</h2><p>Será que a mensagem vira encontro?</p></div></div>
+                <label class="sr-only" for="texto">Mensagem suspeita</label><textarea id="texto" placeholder="Cole aqui a mensagem do grupo..." maxlength="1000"></textarea>
+                <div class="field-hint"><span>⌁</span> A análise considera palavras e contexto</div>
+                <div class="people-grid">
+                    <section class="section-block people-section"><div class="section-heading compact-heading"><div class="section-number positive">+</div><div><h2>Na lista</h2><p>Quem pode comparecer?</p></div></div><div class="input-action"><label class="sr-only" for="nomePode">Nome de quem pode ir</label><input id="nomePode" placeholder="Nome da pessoa" autocomplete="off"><button class="add-button" type="button" onclick="adicionarPode()" aria-label="Adicionar pessoa que pode ir">+</button></div><ul id="listaPode" class="people-list"></ul><p class="empty-state" data-empty="pode">Ninguém adicionado</p></section>
+                    <section class="section-block people-section"><div class="section-heading compact-heading"><div class="section-number negative">−</div><div><h2>Impedidos</h2><p>Quem não consegue ir?</p></div></div><div class="input-stack"><label class="sr-only" for="nomeNaoPode">Nome de quem não pode ir</label><input id="nomeNaoPode" placeholder="Nome da pessoa" autocomplete="off"><div class="input-action"><label class="sr-only" for="motivoNaoPode">Motivo da ausência</label><input id="motivoNaoPode" placeholder="Motivo" autocomplete="off"><button class="add-button" type="button" onclick="adicionarNaoPode()" aria-label="Adicionar pessoa impedida">+</button></div></div><ul id="listaNaoPode" class="people-list"></ul><p class="empty-state" data-empty="nao-pode">Nenhuma restrição</p></section>
+                </div>
+                <button class="analisar" type="button" onclick="analisar()"><span>Analisar resenha</span><span class="button-arrow">→</span></button><div id="resultado" class="result" aria-live="polite"></div>
+            </section>
+        </section>
+    </main>
 
 
     <div id="loading" class="loading">
